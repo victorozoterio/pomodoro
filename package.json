@@ -12,12 +12,14 @@
     "format": "npx @biomejs/biome format --write ."
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "phosphor-react": "^1.4.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.62.0",
     "react-router-dom": "^7.7.1",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.3",
