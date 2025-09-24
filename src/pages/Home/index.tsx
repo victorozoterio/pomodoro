@@ -53,8 +53,10 @@ export function Home() {
 
   // Esse useEffect vai gerar vários bugs que vamos resolver mais pra frente
   useEffect(() => {
+    let interval: number;
+
     if (activeCycle) {
-      setInterval(() => {
+      interval = setInterval(() => {
         // Essa solução não é eficiente pois o 1 segundo do setInterval não é muito preciso
         // setAmountSecondsPassed((state) => {
         //   return state + 1;
@@ -63,6 +65,11 @@ export function Home() {
         setAmountSecondsPassed(differenceInSeconds(new Date(), activeCycle.startDate));
       }, 1000); // 1 segundo
     }
+
+    // quando eu executar o useEffect dnv, ele vai limpar o intervalo que foi criado pelo useEffect anterior
+    return () => {
+      clearInterval(interval);
+    };
   }, [activeCycle]);
 
   function handleCreateNewCycle(data: NewCycleFormData) {
@@ -77,6 +84,7 @@ export function Home() {
 
     setCycles((state) => [...state, newCycle]);
     setActiveCycleId(id);
+    setAmountSecondsPassed(0);
     reset();
   }
 
