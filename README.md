@@ -46,3 +46,41 @@ export function App() {
   );
 }
 ```
+
+# Hooks do React (useSomething)
+
+## useEffect
+
+Todo useEffect é executado assim que o componente é renderizado, e toda vez que uma das dependências for alterada. Caso não seja passado nenhuma dependência, o useEffect será executado somente na primeira renderização.
+
+```jsx
+import { useEffect } from 'react';
+
+function avisarAPI() {
+  console.log('Lista salva no backend!')
+}
+
+export function App() {
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    if (list.length > 0) {
+      avisarAPI();
+    }
+  }, [list]); // fica monitorando a lista, e toda vez que ela for alterada, o useEffect é chamado
+
+  function addToList(){
+    setList((state) =>[...state, 'Novo item']);
+  }
+
+  return (
+    <div>
+      <ul>
+        {list.map((item) => (<li key={item}>{item}</li>))}
+      </ul>
+
+      <button onClick={addToList}>Adicionar item</button>
+    </div>
+  );
+}
+```

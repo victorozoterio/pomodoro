@@ -11,7 +11,8 @@ import {
   StartCountdownButton,
   TaskInput,
 } from './styles';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { differenceInSeconds } from 'date-fns';
 
 const newCycleFormValidationSchema = z.object({
   task: z.string().min(1, 'Informe a tarefa'),
@@ -32,6 +33,7 @@ interface Cycle {
   id: string;
   task: string;
   minutesAmount: number;
+  startDate: Date;
 }
 
 export function Home() {
@@ -47,6 +49,22 @@ export function Home() {
     },
   });
 
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
+
+  // Esse useEffect vai gerar vários bugs que vamos resolver mais pra frente
+  useEffect(() => {
+    if (activeCycle) {
+      setInterval(() => {
+        // Essa solução não é eficiente pois o 1 segundo do setInterval não é muito preciso
+        // setAmountSecondsPassed((state) => {
+        //   return state + 1;
+        // });
+
+        setAmountSecondsPassed(differenceInSeconds(new Date(), activeCycle.startDate));
+      }, 1000); // 1 segundo
+    }
+  }, [activeCycle]);
+
   function handleCreateNewCycle(data: NewCycleFormData) {
     const id = String(new Date().getTime());
 
@@ -54,14 +72,13 @@ export function Home() {
       id,
       task: data.task,
       minutesAmount: data.minutesAmount,
+      startDate: new Date(),
     };
 
     setCycles((state) => [...state, newCycle]);
     setActiveCycleId(id);
     reset();
   }
-
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
   const totalseconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
   const currentSeconds = activeCycle ? totalseconds - amountSecondsPassed : 0;
@@ -113,7 +130,7 @@ export function Home() {
           <span>{minutes[0]}</span>
           <span>{minutes[1]}</span>
           <Separator>:</Separator>
-          <span>{seconds[1]}</span>
+          <span>{seconds[0]}</span>
           <span>{seconds[1]}</span>
         </CountdownContainer>
 
