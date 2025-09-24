@@ -97,6 +97,12 @@ export function Home() {
   const minutes = String(minutesAmount).padStart(2, '0'); // preenche a string com '0' até ter 2 caracteres
   const seconds = String(secondsAmount).padStart(2, '0'); // preenche a string com '0' até ter 2 caracteres
 
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `Pomodoro - ${minutes}:${seconds}`;
+    }
+  }, [minutes, seconds, activeCycle]);
+
   const task = watch('task');
   const isSubmitDisabled = !task;
 
