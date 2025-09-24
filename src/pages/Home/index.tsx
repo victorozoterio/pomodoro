@@ -9,6 +9,7 @@ import {
   MinutesAmountInput,
   Separator,
   StartCountdownButton,
+  StopCountdownButton,
   TaskInput,
 } from './styles';
 import { useEffect, useState } from 'react';
@@ -34,6 +35,7 @@ interface Cycle {
   task: string;
   minutesAmount: number;
   startDate: Date;
+  interruptedDate?: Date;
 }
 
 export function Home() {
@@ -88,6 +90,19 @@ export function Home() {
     reset();
   }
 
+  function handleInterruptCycle() {
+    setCycles(
+      cycles.map((cycle) => {
+        if (cycle.id === activeCycleId) {
+          return { ...cycle, interruptedDate: new Date() };
+        } else {
+          return cycle;
+        }
+      }),
+    );
+    setActiveCycleId(null);
+  }
+
   const totalseconds = activeCycle ? activeCycle.minutesAmount * 60 : 0;
   const currentSeconds = activeCycle ? totalseconds - amountSecondsPassed : 0;
 
@@ -106,6 +121,8 @@ export function Home() {
   const task = watch('task');
   const isSubmitDisabled = !task;
 
+  console.log(cycles);
+
   return (
     <HomeContainer>
       <form onSubmit={handleSubmit(handleCreateNewCycle)} action=''>
@@ -115,6 +132,7 @@ export function Home() {
             id='task'
             list='task-suggestions'
             placeholder='Dê um nome para o seu projeto'
+            disabled={!!activeCycle} // !! converte o valor para booleano, se tiver algo ele retorna true
             {...register('task')}
           />
 
@@ -131,6 +149,7 @@ export function Home() {
             type='number'
             id='minutesAmount'
             placeholder='00'
+            disabled={!!activeCycle} // !! converte o valor para booleano, se tiver algo ele retorna true
             step={5}
             min={5}
             max={60}
@@ -148,10 +167,17 @@ export function Home() {
           <span>{seconds[1]}</span>
         </CountdownContainer>
 
-        <StartCountdownButton disabled={isSubmitDisabled} type='submit'>
-          <Play size={24} />
-          Começar
-        </StartCountdownButton>
+        {activeCycle ? (
+          <StopCountdownButton onClick={handleInterruptCycle} type='button'>
+            <Play size={24} />
+            Interromper
+          </StopCountdownButton>
+        ) : (
+          <StartCountdownButton disabled={isSubmitDisabled} type='submit'>
+            <Play size={24} />
+            Começar
+          </StartCountdownButton>
+        )}
       </form>
     </HomeContainer>
   );
