@@ -1,6 +1,12 @@
 import { FormContainer, MinutesAmountInput, TaskInput } from './styles';
+import { useContext } from 'react';
+import { CyclesContext } from '../..';
+import { useFormContext } from 'react-hook-form';
 
 export function NewCycleForm() {
+  const { activeCycle } = useContext(CyclesContext);
+  const { register } = useFormContext();
+
   return (
     <FormContainer>
       <label htmlFor='task'>Vou trabalhar em</label>
@@ -8,7 +14,7 @@ export function NewCycleForm() {
         id='task'
         list='task-suggestions'
         placeholder='Dê um nome para o seu projeto'
-        disabled={!!activeCycle} // !! converte o valor para booleano, se tiver algo ele retorna true
+        disabled={!!activeCycle}
         {...register('task')}
       />
 
@@ -16,8 +22,7 @@ export function NewCycleForm() {
         <option value='Projeto 1' />
         <option value='Projeto 2' />
         <option value='Projeto 3' />
-        <option value='Projeto 4' />
-        <option value='Projeto 5' />
+        <option value='Banana' />
       </datalist>
 
       <label htmlFor='minutesAmount'>durante</label>
@@ -25,10 +30,10 @@ export function NewCycleForm() {
         type='number'
         id='minutesAmount'
         placeholder='00'
-        disabled={!!activeCycle} // !! converte o valor para booleano, se tiver algo ele retorna true
         step={5}
         min={5}
         max={60}
+        disabled={!!activeCycle}
         {...register('minutesAmount', { valueAsNumber: true })}
       />
 
