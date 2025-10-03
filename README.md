@@ -84,3 +84,81 @@ export function App() {
   );
 }
 ```
+
+# Prop Drilling vs Context API
+
+Prop Drilling é quando a gente tem muitas propriedades apenas para comunicação entre componentes.
+Context API permite compartilharmos informações entre vários componentes ao mesmo tempo.
+
+# Entendedos o Context API
+
+O Context API é uma forma de compartilhar informações entre vários componentes ao mesmo tempo. Da maneira abaixo, o activeCycle é imutável.
+
+```tsx
+import { createContext, useContext } from 'react';
+
+const CyclesContext = createContext({
+  activeCycle: 1,
+});
+
+function NewCycleForm() {
+  const { activeCycle } = useContext(CyclesContext);
+  return <h1>NewCycleForm: {activeCycle}</h1>;
+}
+
+function Countdown() {
+  const { activeCycle } = useContext(CyclesContext);
+  return <h1>Countdown: {activeCycle}</h1>;
+}
+
+export function Home() {
+  return (
+    <div>
+      <NewCycleForm />
+      <Countdown />
+    </div>
+  );
+}
+```
+
+Dessa forma ele já passa a ser mutável.
+
+```tsx
+import { createContext, useContext, useState } from 'react';
+
+const CyclesContext = createContext({} as any);
+
+function NewCycleForm() {
+  const { activeCycle, setActiveCycle } = useContext(CyclesContext);
+  return (
+    <h1>
+      NewCycleForm: {activeCycle}
+      <button
+        onClick={() => {
+          setActiveCycle(2);
+        }}
+      >
+        Alterar ciclo ativo
+      </button>
+    </h1>
+  );
+}
+
+function Countdown() {
+  const { activeCycle } = useContext(CyclesContext);
+  return <h1>Countdown: {activeCycle}</h1>;
+}
+
+export function Home() {
+  const [activeCycle, setActiveCycle] = useState(0);
+
+  return (
+    <CyclesContext.Provider value={{ activeCycle, setActiveCycle }}>
+      <div>
+        <NewCycleForm />
+        <Countdown />
+      </div>
+    </CyclesContext.Provider>
+  );
+}
+```
